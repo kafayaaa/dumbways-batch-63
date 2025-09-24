@@ -12,7 +12,40 @@ body {
   justify-content: flex-start;
   align-items: start;
   height: 100vh;
-  padding: 5rem 30rem 0 30rem;
+  padding: 10rem 30rem 0 30rem;
+}
+
+.navbar {
+  width: 100%;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  position: fixed;
+  padding: 1rem 2rem;
+  background-color: #000;
+  color: #fff;
+}
+
+.logo {
+  font-size: 2rem;
+  font-weight: 900;
+  cursor: default;
+}
+
+.nav-links {
+  display: flex;
+  justify-content: end;
+  gap: 2rem;
+}
+
+.nav-links a {
+  color: #fff;
+  text-decoration: none;
+  font-size: 1.2rem;
+}
+
+.nav-links li {
+  list-style: none;
 }
 
 .title {
