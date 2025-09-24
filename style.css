@@ -1,0 +1,61 @@
+body {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  background-color: #f0f0f0;
+  font-family: "Montserrat", sans-serif;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.title {
+  font-size: 10rem;
+  font-family: "Bricolage Grotesque", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 900;
+  font-style: normal;
+  font-variation-settings: "wdth" 100;
+  color: #10bedd;
+  cursor: default;
+}
+
+.content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 2rem;
+  max-width: 60%;
+  flex-wrap: wrap;
+}
+
+.link {
+  font-size: 1.5rem;
+  padding: 1rem 2rem;
+  border-radius: 0.5rem;
+  border: none;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.3s ease-out;
+}
+
+.link:hover {
+  transform: scale(1.1);
+}
+
+.day-1 {
+  box-shadow: 0px 3px 10px #f89191;
+  background-color: #f89191;
+}
+
+.day-2 {
+  box-shadow: 0px 3px 10px #f8ae91;
+  background-color: #f8ae91;
+}
