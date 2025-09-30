@@ -64,3 +64,13 @@ body {
   box-shadow: 0px 3px 10px #f8d891;
   background-color: #f8d891;
 }
+
+.day-4 {
+  box-shadow: 0px 3px 10px #f8f691;
+  background-color: #f8f691;
+}
+
+.day-6 {
+  box-shadow: 0px 3px 10px #e5f891;
+  background-color: #e5f891;
+}
