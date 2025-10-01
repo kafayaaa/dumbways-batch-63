@@ -71,10 +71,11 @@ function createUser(userData) {
 // Read
 function renderUsers() {
   container.innerHTML = "";
-  users.forEach((item) => {
+  // Maping data
+  users.map((item) => {
     container.innerHTML += `
     <div class="card showcase-card p-3 shadow border-0">
-      <a href="detail/detail.html?id=${
+      <a href="detail-project.html?id=${
         item.id
       }" class="text-decoration-none text-black">
         <img src="${
