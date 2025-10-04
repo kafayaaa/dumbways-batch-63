@@ -1,0 +1,26 @@
+[
+  {
+    "id": 1759562188974,
+    "name": "Web",
+    "startDate": "2025-10-03",
+    "endDate": "2025-10-29",
+    "description": "dawdkajwhdkahdw",
+    "technology": [
+      "java",
+      "android"
+    ],
+    "image": "assets/images/1759562188969-pancasila.png"
+  },
+  {
+    "id": 1759573641705,
+    "name": "Sejarah",
+    "startDate": "2025-10-03",
+    "endDate": "2025-11-20",
+    "description": "gdrgdrg",
+    "technology": [
+      "nodejs",
+      "react"
+    ],
+    "image": "assets/images/1759573641702-7d4dfe7843e228c9f63f0bf2b25d666e.jpg"
+  }
+]
