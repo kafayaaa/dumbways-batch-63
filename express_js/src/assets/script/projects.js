@@ -209,9 +209,9 @@ async function loadData() {
           <div class="card-body d-flex flex-column justify-content-between">
             <div>
               <h5 class="card-title mb-0">${item.name}</h5>
-              <span class="text-secondary">${item.startDate} - ${
-        item.endDate
-      }</span>
+              <span class="text-secondary"> ${formatDate(
+                item.startDate
+              )} - ${formatDate(item.endDate)}</span>
               <p class="card-text mt-4">${item.description}</p>
               <div class="d-flex-justify-start align-items-center gap-5 fs-3 my-4">
                ${renderTechnologies(item.technology)}
@@ -234,6 +234,16 @@ async function loadData() {
     console.error("Error fetching data:", error);
   }
 }
+
+function formatDate(dateStr) {
+  const date = new Date(dateStr);
+  return date.toLocaleDateString("id-ID", {
+    day: "2-digit",
+    month: "long",
+    year: "numeric",
+  });
+}
+
 function renderTechnologies(technology) {
   const icons = {
     nodejs: "fa-brands fa-node-js",
@@ -242,8 +252,14 @@ function renderTechnologies(technology) {
     android: "fa-brands fa-android",
   };
 
+  if (typeof technology === "string") {
+    technology = technology.replace(/[{}]/g, "").split(",");
+  }
+
+  if (!Array.isArray(technology)) return "";
+
   return technology
-    .map((tech) => `<i class="${icons[tech] || "fa-solid fa-code"}"></i>`)
+    .map((tech) => `<i class="fa-brands fa-${tech.trim()}"></i>`)
     .join("");
 }
 
