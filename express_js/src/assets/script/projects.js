@@ -1,191 +1,9 @@
-// let users = JSON.parse(localStorage.getItem("users")) || [];
-// let editingId = null;
-
 const userForm = document.getElementById("userForm");
 const container = document.getElementById("cards");
 const saveBtn = document.getElementById("saveBtn");
 const cancelBtn = document.getElementById("cancelBtn");
 
-// renderUsers();
-
-// userForm.addEventListener("submit", function (e) {
-//   e.preventDefault();
-
-//   const userData = {
-//     name: document.getElementById("name").value,
-//     startDate: document.getElementById("startDate").value,
-//     endDate: document.getElementById("endDate").value,
-//     description: document.getElementById("description").value,
-//     technologies: Array.from(
-//       document.querySelectorAll('input[name="technology"]:checked')
-//     ).map((el) => el.value),
-//     image: document.getElementById("image").files[0],
-//   };
-
-//   if (editingId) {
-//     if (!userData.image) {
-//       const existingUser = users.find((user) => user.id === editingId);
-//       userData.image = existingUser ? existingUser.image : null;
-//       updateUser(userData);
-//     } else {
-//       const reader = new FileReader();
-//       reader.onload = function () {
-//         userData.image = reader.result;
-//         updateUser(userData);
-//       };
-//       reader.readAsDataURL(userData.image);
-//     }
-//     return;
-//   } else {
-//     if (!userData.image) {
-//       alert("Please upload an image.");
-//       return;
-//     } else {
-//       const reader = new FileReader();
-//       reader.onload = function () {
-//         userData.image = reader.result;
-//         createUser(userData);
-//       };
-//       reader.readAsDataURL(userData.image);
-//     }
-//   }
-// });
-
-// // Create
-// function createUser(userData) {
-//   const newUser = {
-//     id: Date.now(),
-//     name: userData.name,
-//     startDate: userData.startDate,
-//     endDate: userData.endDate,
-//     description: userData.description,
-//     technologies: userData.technologies,
-//     image: userData.image,
-//   };
-//   users.push(newUser);
-//   saveTolocalStorage();
-//   renderUsers();
-//   resetForm();
-// }
-
-// // Read
-// function renderUsers() {
-//   container.innerHTML = "";
-//   // Maping data
-//   users.map((item) => {
-//     container.innerHTML += `
-//     <div class="card showcase-card p-3 shadow border-0">
-//       <a href="detail-project.html?id=${
-//         item.id
-//       }" class="text-decoration-none text-black">
-//         <img src="${
-//           item.image
-//         }" class="card-img-top rounded ratio ratio-4x3" alt="..." />
-//         <div class="card-body d-flex flex-column justify-content-between">
-//           <div>
-//             <h5 class="card-title mb-0">${item.name}</h5>
-//             <span class="text-secondary">${item.startDate} - ${
-//       item.endDate
-//     }</span>
-//             <p class="card-text mt-4">${item.description}</p>
-//             <div class="d-flex-justify-start align-items-center gap-5 fs-3 my-4">
-//               ${renderTechnologies(item.technologies)}
-//             </div>
-//           </div>
-//         </div>
-//       </a>
-//       <div class="d-flex justify-content-between align-items-center gap-3" >
-//         <button onclick="editUser(${
-//           item.id
-//         })" class="btn bg-black text-white w-100">edit</button>
-//         <button onclick="deleteUser(${
-//           item.id
-//         })" class="btn bg-black text-white w-100">delete</button>
-//       </div>
-//     </div>
-//     `;
-//   });
-// }
-
-// function renderTechnologies(technologies) {
-//   const icons = {
-//     nodejs: "fa-brands fa-node-js",
-//     react: "fa-brands fa-react",
-//     java: "fa-brands fa-java",
-//     android: "fa-brands fa-android",
-//   };
-
-//   return technologies
-//     .map((tech) => `<i class="${icons[tech] || "fa-solid fa-code"}"></i>`)
-//     .join("");
-// }
-
-// // Delete
-// function deleteUser(id) {
-//   if (confirm("Are you sure you want to delete this user?")) {
-//     users = users.filter((user) => user.id !== id);
-//     saveTolocalStorage();
-//     renderUsers();
-//   }
-// }
-
-// // Edit
-// function editUser(id) {
-//   const user = users.find((user) => user.id === id);
-//   if (user) {
-//     document.getElementById("name").value = user.name;
-//     document.getElementById("startDate").value = user.startDate;
-//     document.getElementById("endDate").value = user.endDate;
-//     document.getElementById("description").value = user.description;
-//     Array.from(document.querySelectorAll('input[name="technology"]')).forEach(
-//       (el) => {
-//         el.checked = user.technologies.includes(el.value);
-//       }
-//     );
-
-//     editingId = id;
-//     saveBtn.textContent = "Update";
-//     cancelBtn.style.display = "inline-block";
-//   }
-// }
-
-// // Update
-// function updateUser(userData) {
-//   const userIndex = users.findIndex((user) => user.id === editingId);
-//   if (userIndex !== -1) {
-//     users[userIndex] = {
-//       ...users[userIndex],
-//       name: userData.name,
-//       startDate: userData.startDate,
-//       endDate: userData.endDate,
-//       description: userData.description,
-//       technologies: userData.technologies,
-//       image: userData.image,
-//     };
-//     saveTolocalStorage();
-//     renderUsers();
-//     resetForm();
-//   }
-// }
-
-// function resetForm() {
-//   userForm.reset();
-//   editingId = null;
-//   saveBtn.textContent = "Add";
-
-//   if (cancelBtn) {
-//     cancelBtn.style.display = "none";
-//   }
-// }
-
-// function cancelEdit() {
-//   resetForm();
-// }
-
-// function saveTolocalStorage() {
-//   localStorage.setItem("users", JSON.stringify(users));
-// }
-
+// Load Data
 async function loadData() {
   try {
     const res = await fetch("http://localhost:3000/get-data");
@@ -210,8 +28,8 @@ async function loadData() {
             <div>
               <h5 class="card-title mb-0">${item.name}</h5>
               <span class="text-secondary"> ${formatDate(
-                item.startDate
-              )} - ${formatDate(item.endDate)}</span>
+                item.start_date
+              )} - ${formatDate(item.end_date)}</span>
               <p class="card-text mt-4">${item.description}</p>
               <div class="d-flex-justify-start align-items-center gap-5 fs-3 my-4">
                ${renderTechnologies(item.technology)}
@@ -263,26 +81,18 @@ function renderTechnologies(technology) {
     .join("");
 }
 
-function setEditForm(data) {
-  document.getElementById("id").value = data.id;
-  document.getElementById("name").value = data.name;
-  document.getElementById("startDate").value = data.startDate;
-  document.getElementById("endDate").value = data.endDate;
-  document.getElementById("description").value = data.description;
-  Array.from(document.querySelectorAll('input[name="technology"]')).forEach(
-    (el) => {
-      el.checked = data.technology.includes(el.value);
-    }
-  );
-
-  window.scrollTo({ top: 0, behavior: "smooth" });
-}
-
+// Add & Edit Data
 userForm.addEventListener("submit", async (event) => {
   event.preventDefault();
 
   const id = document.getElementById("id").value;
   const formData = new FormData(userForm);
+
+  const techs = [];
+  document
+    .querySelectorAll('input[name="technology"]:checked')
+    .forEach((el) => techs.push(el.value));
+  formData.set("technology", techs.join(","));
 
   let url = "http://localhost:3000/add-data";
   let method = "POST";
@@ -305,10 +115,42 @@ userForm.addEventListener("submit", async (event) => {
     loadData();
     userForm.reset();
     document.getElementById("id").value = "";
+  } else {
+    alert(result.error);
+    console.error(result.error);
   }
 });
 
-// Delete
+// Edit Data
+function setEditForm(data) {
+  document.getElementById("id").value = data.id;
+  document.getElementById("name").value = data.name;
+
+  if (data.start_date) {
+    document.getElementById("startDate").value = data.start_date.split("T")[0];
+  }
+
+  if (data.end_date) {
+    document.getElementById("endDate").value = data.end_date.split("T")[0];
+  }
+
+  if (data.technology) {
+    const techs =
+      typeof data.technology === "string"
+        ? data.technology.replace(/[{}]/g, "").split(",")
+        : data.technology;
+
+    document
+      .querySelectorAll('input[name="technology"]')
+      .forEach((el) => (el.checked = techs.includes(el.value)));
+  }
+
+  document.getElementById("description").value = data.description;
+
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+// Delete Data
 async function deleteData(id) {
   if (!confirm("Are you sure you want to delete this project?")) return;
   const res = await fetch(`http://localhost:3000/delete-data/${id}`, {
