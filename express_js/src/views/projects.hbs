@@ -60,12 +60,14 @@
               <a class="nav-link active fw-bold" href="#">My Project</a>
             </li>
           </ul>
-          <a
-            href="/contact"
-            class="btn fw-bold bg-black text-light"
-            type="submit"
-          >
+
+          <span class="fw-bold me-3">{{userData.username}}</span>
+
+          <a href="/contact" class="btn fw-bold bg-black text-light me-3">
             Contact Me
+          </a>
+          <a href="/logout" class="btn fw-bold bg-danger text-light">
+            LOGOUT
           </a>
         </div>
       </div>

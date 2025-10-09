@@ -6,6 +6,9 @@ import cors from "cors";
 import multer from "multer";
 import hbs from "hbs";
 import pool from "./db.js";
+import bcrypt from "bcrypt";
+import flash from "express-flash";
+import session from "express-session";
 
 const app = express();
 const port = 3000;
@@ -32,12 +35,30 @@ app.use("/assets", express.static("src/assets"));
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 app.use(express.json());
+app.use(flash());
+app.use(
+  session({
+    secret: "secret-key",
+    resave: false,
+    saveUninitialized: true,
+    cookie: {
+      maxAge: 1000 * 60 * 60, // ✅ 1 jam (dalam milidetik)
+    },
+  })
+);
 
 // Routes
 app.get("/", home);
 app.get("/projects", projects);
 app.get("/contact", contact);
-app.get("/detail-project", detailProject);
+app.get("/detail-project/:id", detailData);
+
+// Auth
+app.get("/login", login);
+app.post("/login", loginHandler);
+app.get("/register", register);
+app.post("/register", registerHandler);
+app.get("/logout", logoutHandler);
 
 app.post("/add-data", upload.single("image"), addData);
 app.put("/edit-data/:id", upload.single("image"), editData);
@@ -45,22 +66,24 @@ app.delete("/delete-data/:id", deleteData);
 
 function home(req, res) {
   const title = "Home";
-  res.render("index", { title });
+  const userData = req.session.user;
+  res.render("index", { title, userData });
 }
 
 function projects(req, res) {
   const title = "My Projects";
   const data = readData();
-  res.render("projects", { title, data });
+  const userData = req.session.user;
+  if (!userData) {
+    return res.redirect("/login");
+  }
+  res.render("projects", { title, data, userData });
 }
 
 function contact(req, res) {
   const title = "My Contact";
-  res.render("contact", { title });
-}
-
-function detailProject(req, res) {
-  res.render("detail-project");
+  const userData = req.session.user;
+  res.render("contact", { title, userData });
 }
 
 // Read Data
@@ -214,15 +237,137 @@ export async function deleteData(req, res) {
 }
 
 // Detail Data
-app.get("/detail-project/:id", (req, res) => {
-  const projectId = req.params.id;
-  const data = readData();
-  const detailData = data.find((item) => item.id == projectId);
-  if (!detailData) {
-    return res.status(404).json({ success: false, message: "Data not found" });
+export async function detailData(req, res) {
+  try {
+    const userData = req.session.user;
+    if (!userData) {
+      return res.redirect("/login");
+    }
+
+    const { id } = req.params;
+
+    const query = "SELECT * FROM projects WHERE id = $1";
+    const result = await pool.query(query, [id]);
+
+    if (result.rows.length === 0) {
+      return res.status(404).send("Project not found");
+    }
+
+    const project = result.rows[0];
+
+    let technologies = project.technology;
+    if (typeof technologies === "string") {
+      technologies = technologies.replace(/[{}"]/g, "").split(",");
+    }
+
+    res.render("detail-project", {
+      project: {
+        ...project,
+        technology: technologies,
+        startDate: new Date(project.start_date).toISOString().split("T")[0],
+        endDate: new Date(project.end_date).toISOString().split("T")[0],
+      },
+    });
+  } catch (error) {
+    console.error("Error fetching project detail:", error);
+    res.status(500).send("Internal Server Error");
   }
-  res.render("detail-project", { project: detailData });
-});
+}
+
+// Login
+function login(req, res) {
+  const title = "LOGIN";
+  const userData = req.session.user;
+  if (userData) {
+    return res.redirect("/");
+  }
+  res.render("login", { title });
+}
+
+// Login Handler
+export async function loginHandler(req, res) {
+  const { email, password } = req.body;
+
+  const isRegistered = await pool.query(
+    `SELECT * FROM public.users WHERE email='${email}'`
+  );
+
+  if (isRegistered.rowCount === 0) {
+    req.flash("error", "Invalid email or password");
+    return res.redirect("/login");
+  }
+
+  const isMatch = await bcrypt.compare(password, isRegistered.rows[0].password);
+
+  if (!isMatch) {
+    req.flash("error", "Invalid email or password");
+    return res.redirect("/login");
+  }
+
+  req.session.user = {
+    username: isRegistered.rows[0].username,
+    email: isRegistered.rows[0].email,
+  };
+
+  res.redirect("/projects");
+}
+
+// Logout Handler
+export function logoutHandler(req, res) {
+  req.session.destroy((err) => {
+    if (err) {
+      console.error(err);
+    }
+    res.redirect("/login");
+  });
+}
+
+// Register
+export async function register(req, res) {
+  const title = "REGISTER";
+  const userData = req.session.user;
+  if (userData) {
+    return res.redirect("/");
+  }
+  res.render("register", { title });
+}
+
+// Register Handler
+export async function registerHandler(req, res) {
+  try {
+    const { username, email, password } = req.body;
+
+    const isRegistered = await pool.query(
+      "SELECT * FROM public.users WHERE email = $1",
+      [email]
+    );
+    if (isRegistered.rowCount > 0) {
+      console.log("Email already registered");
+      req.flash("error", "Email already registered");
+      return res.redirect("/register");
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const query = `INSERT INTO public.users (username, email, password) VALUES ($1, $2, $3) RETURNING *`;
+    const values = [username, email, hashedPassword];
+
+    const result = await pool.query(query, values);
+
+    res.status(201).json({
+      success: true,
+      message: "User registered successfully",
+      data: result.rows[0],
+    });
+    res.redirect("/login");
+  } catch (error) {
+    console.error("Error registering user:", error.message);
+    res.status(500).json({
+      success: false,
+      message: "Failed to register user",
+    });
+  }
+}
 
 hbs.registerHelper("json", function (context) {
   return JSON.stringify(context, null, 2);

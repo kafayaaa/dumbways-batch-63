@@ -63,9 +63,18 @@
               <a class="nav-link" href="/projects">My Project</a>
             </li>
           </ul>
-          <a href="/contact" class="btn fw-bold bg-black text-light" type="submit">
+          <a href="/contact" class="btn fw-bold bg-black text-light me-3">
             Contact Me
           </a>
+          {{#if userData}}
+           <a href="/logout" class="btn fw-bold bg-danger text-light">
+            LOGOUT
+          </a>
+          {{else}}
+          <a href="/login" class="btn fw-bold bg-primary text-light">
+            Login
+          </a>
+          {{/if}}
         </div>
       </div>
     </nav>
